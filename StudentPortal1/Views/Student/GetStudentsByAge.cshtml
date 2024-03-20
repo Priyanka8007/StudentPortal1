@@ -1,0 +1,35 @@
+﻿@model List<StudentPortal1.Models.Dtos.StudentDto>
+
+@{
+    ViewData["Title"] = "Students By Age";
+}
+
+<h2>Students By Age</h2>
+
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td>@student.StdId</td>
+                    <td>@student.Name</td>
+                    <td>@student.Age</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No students found for the entered age.</p>
+}
