@@ -1,0 +1,57 @@
+﻿@page "/dashboard"
+@using Syncfusion.Blazor.Charts
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1>Student Age Chart</h1>
+
+<div id="chart-container">
+    <div id="chart"></div>
+</div>
+
+@section Scripts {
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Syncfusion Scripts -->
+    <script src="https://cdn.syncfusion.com/ej2/20.1.47/ej2.min.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/Dashboard1/ShowChart',
+                type: 'GET',
+                success: function (data) {
+                    // Initialize the chart after data is successfully fetched
+                    var chart = new ej.charts.Chart({
+                        // Specify the primary X axis
+                        primaryXAxis: {
+                            valueType: 'Category',
+                            title: 'Name'
+                        },
+                        // Specify the primary Y axis
+                        primaryYAxis: {
+                            title: 'Age'
+                        },
+                        // Chart title
+                        title: 'Student Age Chart',
+                        // Chart series
+                        series: [{
+                            dataSource: data,
+                            xName: 'name',
+                            yName: 'age',
+                            type: 'Column',
+                            name: 'Age'
+                        }],
+                        tooltip: { enable: true }
+                    });
+                    // Render the chart
+                    chart.appendTo('#chart');
+                },
+                error: function (error) {
+                    console.log('Error:', error);
+                }
+            });
+        });
+    </script>
+}

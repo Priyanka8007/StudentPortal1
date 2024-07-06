@@ -1,0 +1,62 @@
+﻿@* @model List<StudentPortal1.Models.Domain.Student> // Replace YourNamespace with the actual namespace of your SalesData class
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="salesChart" width="400" height="200"></canvas>
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "/Dashboard/Index", // Adjust the URL as per your controller route
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    renderChart(data);
+                },
+                error: function () {
+                    console.log("Error occurred while fetching data.");
+                }
+            });
+        });
+
+        function renderChart(data) {
+            var months = data.map(function (item) {
+                return item.month;
+            });
+            var revenues = data.map(function (item) {
+                return item.revenue;
+            });
+
+            var ctx = document.getElementById('salesChart').getContext('2d');
+            var salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Monthly Revenue',
+                        data: revenues,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+ *@

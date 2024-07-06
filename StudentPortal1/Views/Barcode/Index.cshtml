@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Barcode Reader";
+}
+
+<h2>Barcode Reader</h2>
+
+<input type="file" id="file-input" />
+<div id="result"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+<script>
+    document.getElementById('file-input').addEventListener('change', function (event) {
+        var file = event.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var image = new Image();
+                image.src = e.target.result;
+                image.onload = function () {
+                    Quagga.decodeSingle({
+                        src: image.src,
+                        numOfWorkers: 0,  // Needs to be 0 when used with decodeSingle
+                        inputStream: {
+                            size: 800  // restrict input-size to be 800px in width (long-side)
+                        },
+                        decoder: {
+                            readers: ["code_128_reader"]  // add your barcode types here
+                        },
+                    }, function (result) {
+                        if (result && result.codeResult) {
+                            document.getElementById('result').innerText = 'Barcode: ' + result.codeResult.code;
+                        } else {
+                            document.getElementById('result').innerText = 'No barcode detected.';
+                        }
+                    });
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

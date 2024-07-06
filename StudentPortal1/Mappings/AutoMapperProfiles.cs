@@ -17,8 +17,13 @@ namespace StudentPortal1.Mappings
 
             // Mapping between UpdateStudentRequestDto and Student
             CreateMap<UpdateDtos, Student>();
-          //  CreateMap<DeleteDtos, Student>();
+            //  CreateMap<DeleteDtos, Student>();
 
+
+            CreateMap<Employee, EmployeeDto>().ReverseMap();
+
+            CreateMap<AddEmployeeDto, Employee>().ReverseMap();
+            CreateMap<UpdateEmployeeDto, Employee>().ReverseMap();
         }
     }
 }

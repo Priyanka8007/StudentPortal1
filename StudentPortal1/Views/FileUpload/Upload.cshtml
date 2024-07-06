@@ -1,0 +1,23 @@
+﻿@model StudentPortal1.Models.Domain.FileUpload
+
+@{
+    ViewData["Title"] = "File Upload";
+}
+
+<h1>File Upload</h1>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Message
+    </div>
+}
+
+<form asp-action="Upload" asp-controller="FileUpload" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="file">Choose File:</label>
+        <input type="file" class="form-control-file" id="file" name="File">
+        <span asp-validation-for="File" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>

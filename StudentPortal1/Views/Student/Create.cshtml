@@ -2,16 +2,43 @@
 
 <h2>Create Student</h2>
 
-<form asp-action="Create" method="post">
+<form id="studentForm" asp-action="Create" method="post">
     <div class="form-group">
         <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
+        <input asp-for="Name" class="form-control" id="nameInput" />
+        <span id="nameHistory" class="history"></span>
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Age"></label>
-        <input asp-for="Age" class="form-control" />
+        <input asp-for="Age" class="form-control" id="ageInput" />
+        <span id="ageHistory" class="history"></span>
         <span asp-validation-for="Age" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
+
+
+
+@* <script src="~/js/student.js"></script>
+ *@
+@*  <script>
+    document.getElementById('studentForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Perform your AJAX submission here if needed
+
+
+        // Display success message
+        document.getElementById('successMessage').style.display = 'block';
+
+        // Clear input fields
+        document.getElementById('nameInput').value = '';
+        document.getElementById('ageInput').value = '';
+
+        // Optional: Hide success message after a certain duration
+        setTimeout(function () {
+            document.getElementById('successMessage').style.display = 'none';
+        }, 3000); // Hide after 3 seconds (3000 milliseconds)
+    });
+</script> *@

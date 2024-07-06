@@ -1,8 +1,15 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using StudentPortal1.Data;
 using StudentPortal1.Mappings;
 using StudentPortal1.Repositories;
+using StudentPortal1.Services;
+using System.Text;
 
 namespace StudentPortal1
 {
@@ -12,14 +19,84 @@ namespace StudentPortal1
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddAntiforgery(options =>
+            {
+                options.HeaderName = "RequestVerificationToken";
+            });
+
+            var logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .WriteTo.File("Log/NzWalks_Log.txt", rollingInterval: RollingInterval.Day)
+           .MinimumLevel.Information()
+           .CreateLogger();
+
+            builder.Logging.ClearProviders();
+            builder.Logging.AddSerilog(logger);
+
+
+            // Add services to the container.
+          
+            builder.Services.AddRazorPages()
+                .AddRazorRuntimeCompilation();
 
             builder.Services.AddDbContext<StudentDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("StudentConnectionString")));
+            options.UseSqlServer(builder.Configuration.GetConnectionString("StudentConnectionString")));
 
+            builder.Services.AddDbContext<EmployeeDbContext>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("employeeConnectionString")));
+
+            builder.Services.AddDbContext<StudentAuthDbContext>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("StudentAuthConnectionString")));
+
+            builder.Services.AddIdentityCore<IdentityUser>()
+                 .AddRoles<IdentityRole>()
+                 .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("StudentPortal1")
+                 .AddDefaultTokenProviders();
+
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<StudentAuthDbContext>();
+
+
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 1;
+
+
+
+            });
             builder.Services.AddScoped<IStudentRepository, SqlStudentRepository>();
+            builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+            // Add HttpClient
+            builder.Services.AddHttpClient();
+
+            // Configure authentication
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                };
+            });
+
+            // Add authorization
+            builder.Services.AddAuthorization();
 
 
 
@@ -34,11 +111,12 @@ namespace StudentPortal1
                 app.UseHsts();
             }
 
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
@@ -47,5 +125,8 @@ namespace StudentPortal1
 
             app.Run();
         }
+
+      
+       
     }
 }

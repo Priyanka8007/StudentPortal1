@@ -7,12 +7,12 @@ namespace StudentPortal1.Data
 {
     public class StudentDbContext : DbContext
     {
-        public StudentDbContext(DbContextOptions options) : base(options)
+        public StudentDbContext(DbContextOptions<StudentDbContext> options) : base(options)
         {
 
         }
         public DbSet<Student> Students { set; get; }
-
+        public DbSet<Person>Persons { set; get; }
 
     }
 

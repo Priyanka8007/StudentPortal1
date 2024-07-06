@@ -1,0 +1,34 @@
+﻿using StudentPortal;
+@model StudentPortal1.Models.Domain.Person // Ensure that you're specifying the correct namespace and class name
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AJAX Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="personInfo">
+        Name: <span id="personName">@Model.Name</span> <br />
+        Current Date: <span id="currentDate">@Model.CurrentDate</span>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "/Person/GetPerson",
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    $("#personName").text(data.name);
+                    $("#currentDate").text(data.currentDate);
+                    alert("Name: " + data.name + "\nCurrent Date: " + data.currentDate + "DATA GET SUCCESSFULLY.");
+                },
+                error: function () {
+                    $("#personInfo").html("Error occurred while fetching data.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentPortal1.Models.Domain;
@@ -7,6 +8,7 @@ using StudentPortal1.Repositories;
 
 namespace StudentPortal1.Controllers
 {
+   //Authorize]
     public class StudentController : Controller
 
     {
@@ -18,7 +20,8 @@ namespace StudentPortal1.Controllers
             _studentRepository = studentRepository;
             _mapper = mapper;
         }
-        [HttpGet]
+        [HttpGet ("{id:int}")]
+        [Authorize]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var getRegionDomain = await _studentRepository.GetStudentByIdAsync(id);
