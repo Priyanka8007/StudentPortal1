@@ -9,6 +9,8 @@ using StudentPortal1.Data;
 using StudentPortal1.Mappings;
 using StudentPortal1.Repositories;
 using StudentPortal1.Services;
+
+//using StudentPortal1.Services;
 using System.Text;
 
 namespace StudentPortal1
@@ -19,11 +21,24 @@ namespace StudentPortal1
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            //builder.Services.AddAntiforgery(options =>
+            //{
+            //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            //    options.Cookie.SameSite = SameSiteMode.Strict;
+            //});
+
+            //builder.Services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            //    options.Cookie.SameSite = SameSiteMode.Strict;
+            //});
+
+
             builder.Services.AddControllersWithViews();
-            builder.Services.AddAntiforgery(options =>
-            {
-                options.HeaderName = "RequestVerificationToken";
-            });
+            //builder.Services.AddAntiforgery(options =>
+            //{
+            //    options.HeaderName = "RequestVerificationToken";
+            //});
 
             var logger = new LoggerConfiguration()
            .WriteTo.Console()
@@ -39,12 +54,15 @@ namespace StudentPortal1
           
             builder.Services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
+            builder.Services.AddDbContext<EmployeeDbContext>(options =>
+        
+            
+            options.UseSqlServer(builder.Configuration.GetConnectionString("employeeConnectionString1")));
 
             builder.Services.AddDbContext<StudentDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("StudentConnectionString")));
 
-            builder.Services.AddDbContext<EmployeeDbContext>(options =>
-           options.UseSqlServer(builder.Configuration.GetConnectionString("employeeConnectionString")));
+         
 
             builder.Services.AddDbContext<StudentAuthDbContext>(options =>
            options.UseSqlServer(builder.Configuration.GetConnectionString("StudentAuthConnectionString")));
@@ -72,7 +90,12 @@ namespace StudentPortal1
             builder.Services.AddScoped<IStudentRepository, SqlStudentRepository>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
-            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+          builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            builder.Services.AddScoped<ICityRepository, CityRepository>();
+            builder.Services.AddScoped<IStateRepository, StateRepository>();
+            builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+            builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
+            builder.Services.AddScoped<IPayrollService, PayrollService>();
 
             // Add HttpClient
             builder.Services.AddHttpClient();

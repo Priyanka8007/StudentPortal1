@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentPortal1.Data;
 
@@ -11,9 +12,11 @@ using StudentPortal1.Data;
 namespace StudentPortal1.Migrations.EmployeeDb
 {
     [DbContext(typeof(EmployeeDbContext))]
-    partial class EmployeeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240715063719_Initialcreate")]
+    partial class Initialcreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,44 +174,6 @@ namespace StudentPortal1.Migrations.EmployeeDb
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("StudentPortal1.Models.Domain.Payroll", b =>
-                {
-                    b.Property<Guid>("PayrollId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("BaseSalary")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("DaysWorked")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Deductions")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("PayDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("PerformanceBonus")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TotalSalary")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("PayrollId");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.ToTable("Payrolls");
-                });
-
             modelBuilder.Entity("StudentPortal1.Models.Domain.State", b =>
                 {
                     b.Property<int>("StateId")
@@ -293,17 +258,6 @@ namespace StudentPortal1.Migrations.EmployeeDb
                     b.Navigation("Country");
 
                     b.Navigation("State");
-                });
-
-            modelBuilder.Entity("StudentPortal1.Models.Domain.Payroll", b =>
-                {
-                    b.HasOne("StudentPortal1.Models.Domain.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("StudentPortal1.Models.Domain.State", b =>

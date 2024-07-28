@@ -10,6 +10,10 @@
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="itext.kernel.core" Version="1.0.2" />
+    <PackageReference Include="itext.layout.core" Version="1.0.1" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.5" />
+    <PackageReference Include="itext7.font-asian" Version="8.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.17" />
@@ -37,6 +41,7 @@
   <ItemGroup>
     <Folder Include="Log\" />
     <Folder Include="Migrations\StudentAuthDb\" />
+    <Folder Include="Resources\Font\" />
     <Folder Include="wwwroot\Images\cardjs\" />
     <Folder Include="wwwroot\UploadFiles\" />
   </ItemGroup>

@@ -1,0 +1,45 @@
+﻿@model StudentPortal1.Models.Dtos.PayrollDto
+
+@{
+    ViewData["Title"] = "Create Payroll";
+}
+
+<h2>Create Payroll</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="EmployeeId" class="control-label"></label>
+        <select asp-for="EmployeeId" asp-items="@(new SelectList(ViewBag.Employees, "EmpId", "EmpName"))" class="form-control"></select>
+        <span asp-validation-for="EmployeeId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="BaseSalary" class="control-label"></label>
+        <input asp-for="BaseSalary" class="form-control" />
+        <span asp-validation-for="BaseSalary" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="DaysWorked" class="control-label"></label>
+        <input asp-for="DaysWorked" class="form-control" />
+        <span asp-validation-for="DaysWorked" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PerformanceBonus" class="control-label"></label>
+        <input asp-for="PerformanceBonus" class="form-control" />
+        <span asp-validation-for="PerformanceBonus" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Deductions" class="control-label"></label>
+        <input asp-for="Deductions" class="form-control" />
+        <span asp-validation-for="Deductions" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PayDate" class="control-label"></label>
+        <input asp-for="PayDate" class="form-control" />
+        <span asp-validation-for="PayDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

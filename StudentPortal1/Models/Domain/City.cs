@@ -4,8 +4,12 @@ namespace StudentPortal1.Models.Domain
 {
     public class City
     {
-        [Key]
-        public int Id { get; set; }
+        public int CityId { get; set; }
         public string Name { get; set; }
-    }
+        public int StateId { get; set; } // Foreign key
+        public State State { get; set; } // Navigation property
+
+
+    } 
+
 }

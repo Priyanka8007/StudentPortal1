@@ -1,33 +1,45 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace StudentPortal1.Models.Domain
 {
-    public class  Employee
+    public class Employee
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid EmpId { get; set; }
 
+       
         public string EmpName { get; set; }
 
+      
         public int Age { get; set; }
 
-        public string Gender {  get; set; }
+       
+        public string Gender { get; set; }
 
-        public string Designation { set; get; }
+        
+        public string Designation { get; set; }
 
-        //create dropdown for this from database
-        public string Country { set; get; }
+       
+        [EmailAddress]
+        public string Email { get; set; }
 
-        public  string State { set; get; }
+        [ForeignKey("Country")]
+        public int CountryId { get; set; }
+        public Country Country { get; set; }
 
-        public string City { set; get; }
+        [ForeignKey("State")]
+        public int StateId { get; set; }
+        public State State { get; set; }
 
-        public string EmailId { set; get; }
+        [ForeignKey("City")]
+        public int CityId { get; set; }
+        public City City { get; set; }
 
-        public string Pincode { set; get; }
-
-        [Required]
-        public DateTime? LastLoginDate { get; set; }
-
+       
+       
+        public string Pincode { get; set; }
     }
 }

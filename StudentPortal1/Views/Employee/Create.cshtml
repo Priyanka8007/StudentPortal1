@@ -1,267 +1,187 @@
-﻿@{
-    var antiforgeryToken = Html.AntiForgeryToken().ToString();
+﻿@model StudentPortal1.Models.Dtos.EmployeeDto
+
+@{
+    ViewData["Title"] = "Create Employee";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Employee</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            margin: 0;
-            padding: 20px;
-        }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+<h2>Create Employee</h2>
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="radio"], input[type="checkbox"] {
-            width: auto;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-
-        .radio-inline label {
-            display: inline-block;
-            margin-right: 15px;
-        }
-
-        button {
-            padding: 12px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            display: block;
-            margin: auto;
-            margin-top: 10px;
-        }
-
-            button:hover {
-                background-color: #45a049;
-            }
-    </style>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-</head>
-<body>
-    <div class="container">
-        <h2>Add Employee</h2>
-
-        <form id="employeeForm">
-            @Html.AntiForgeryToken()
-
-            <div class="form-group">
-                <label for="EmpName">Employee Name:</label>
-                <input type="text" id="EmpName" name="EmpName" required autocomplete="off">
-            </div>
-
-            <div class="form-group">
-                <label for="Age">Age:</label>
-                <input type="number" id="Age" name="Age" required autocomplete="off">
-            </div>
-
-            <div class="form-group">
-                <label>Gender:</label><br>
-                <div class="radio-inline">
-                    <input type="radio" id="Male" name="Gender" value="Male" required autocomplete="off">
-                    <label for="Male">Male</label>
-                </div>
-                <div class="radio-inline">
-                    <input type="radio" id="Female" name="Gender" value="Female" required autocomplete="off">
-                    <label for="Female">Female</label>
-                </div>
-                <div class="radio-inline">
-                    <input type="radio" id="Other" name="Gender" value="Other" required autocomplete="off">
-                    <label for="Other">Other</label>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="Designation">Designation:</label>
-                <input type="text" id="Designation" name="Designation" autocomplete="off">
-            </div>
-
-            <div class="form-group">
-                <label for="Country">Country:</label>
-                <input type="text" id="Country" name="Country" autocomplete="off">
-            </div>
-
-            <div class="form-group">
-                <label for="State">State:</label>
-                <input type="text" id="State" name="State" autocomplete="off">
-            </div>
-
-            <div class="form-group">
-                <label for="City">City:</label>
-                <input type="text" id="City" name="City" autocomplete="off">
-            </div>
-
-            <div class="form-group">
-                <label for="EmailId">Email:</label>
-                <input type="email" id="EmailId" name="EmailId" autocomplete="off">
-            </div>
-
-            <div class="form-group">
-                <label for="Pincode">Pincode:</label>
-                <input type="text" id="Pincode" name="Pincode" autocomplete="off">
-            </div>
-
-            <button type="submit">Submit</button>
-        </form>
-
-        <div id="result"></div>
-        <div class="employee-list"></div>
+<form asp-action="Create" method="post" class="form-horizontal">
+    <div class="form-group">
+        <label asp-for="EmpName" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="EmpName" class="form-control" />
+            <span asp-validation-for="EmpName" class="text-danger"></span>
+        </div>
     </div>
 
+    <div class="form-group">
+        <label asp-for="Age" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Age" class="form-control" />
+            <span asp-validation-for="Age" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Gender" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Gender" class="form-control" />
+            <span asp-validation-for="Gender" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Designation" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Designation" class="form-control" />
+            <span asp-validation-for="Designation" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CountryId" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <select asp-for="CountryId" class="form-control" asp-items="ViewBag.Countries">
+                <option value="">-- Select Country --</option>
+            </select>
+            <span asp-validation-for="CountryId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StateId" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <select asp-for="StateId" class="form-control" asp-items="ViewBag.States">
+                <option value="">-- Select State --</option>
+            </select>
+            <span asp-validation-for="StateId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CityId" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <select asp-for="CityId" class="form-control" asp-items="ViewBag.Cities">
+                <option value="">-- Select City --</option>
+            </select>
+            <span asp-validation-for="CityId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Pincode" class="col-md-2 control-label"></label>
+        <div class="col-md-10">
+            <input asp-for="Pincode" class="form-control" />
+            <span asp-validation-for="Pincode" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </div>
+</form>
+<div id="employee-card-container">
+    <!-- Employee card will be inserted here -->
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
     <script>
         $(document).ready(function () {
-            $('#employeeForm').on('submit', function (event) {
-                event.preventDefault();
 
-                const form = $('#employeeForm');
-                const formData = form.serialize();
-
-                const token = $('input[name="__RequestVerificationToken"]').val();
+            $('#employeeForm').submit(function (event) {
+                event.preventDefault(); // Prevent the form from submitting via the browser
 
                 $.ajax({
+                    url: '@Url.Action("Create", "Employee")',
                     type: 'POST',
-                    url: '/Employee/Create', // Ensure this matches your route
-                    data: formData,
-                    headers: {
-                        'RequestVerificationToken': token
-                    },
+                    data: $(this).serialize(),
                     success: function (response) {
-                        $('#result').text(response.message);
-                        form[0].reset();
-                        addElement();
+                        if (response.success) {
+                            var employee = response.employee;
+                            var cardHtml =
+                                '<div class="card" style="width: 18rem;">' +
+                                '<img class="card-img-top" src="' + (employee.gender.toLowerCase() == 'male' ? '/images/cardjs/rr.jpg' : '/images/cardjs/female.jpg') + '" alt="Employee image">' +
+                                '<div class="card-body">' +
+                                '<h5 class="card-title">' + employee.empName + '</h5>' +
+                                '<p class="card-text">' + employee.designation + '</p>' +
+                                '</div>' +
+                                '</div>';
+                            $('#employee-card-container').html(cardHtml);
+                        } else {
+                            // Display validation errors
+                            alert('Failed to create employee: ' + response.errors.join(', '));
+                        }
                     },
                     error: function (xhr, status, error) {
-                        $('#result').text('Error adding employee.');
-                        console.error('Error status:', status);
-                        console.error('Error details:', error);
-                        console.error('Error response:', xhr.responseText);
+                        console.error('AJAX Error:', status, error);
+                        alert('Failed to create employee.');
                     }
                 });
             });
 
-            function addElement() {
-                var name = $('#EmpName').val();
-                var designation = $('#Designation').val();
-                var email = $('#EmailId').val();
-                var gender = $('input[name="Gender"]:checked').val();
-                var source = gender === 'Male' ? '/Images/cardjs/rr.jpg' : '/Images/cardjs/female.jpg';
 
-                var employeedetails = `
-                            <style>
-                                .card {
-                                    display: flex;
-                                    flex-direction: column;
-                                    justify-content: center;
-                                    align-items: center;
-                                    border: 1px solid #ddd;
-                                    border-radius: 8px;
-                                    overflow: hidden;
-                                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                                    margin: 20px 0;
-                                    background-color: #fff;
-                                    font-family: Arial, sans-serif;
-                                }
+            $('#CountryId').change(function () {
+                var countryId = $(this).val();
+                if (countryId) {
+                    $.get('@Url.Action("GetStatesByCountry", "Employee")', { countryId: countryId }, function (data) {
+                        var stateDropdown = $('#StateId');
+                        stateDropdown.empty();
+                        stateDropdown.append('<option value="">-- Select State --</option>');
+                        $.each(data, function (index, item) {
+                            stateDropdown.append(new Option(item.name, item.stateId));
+                        });
+                    }).fail(function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error getting states: ", textStatus, errorThrown);
+                    });
+                } else {
+                    $('#StateId').empty().append('<option value="">-- Select State --</option>');
+                    $('#CityId').empty().append('<option value="">-- Select City --</option>');
+                }
+            });
 
-                                .card img {
-                                    max-width: 100px;
-                                    height: auto;
-                                    object-fit: cover;
-                                    border-radius: 8px 0 0 8px;
-                                }
+           $('#StateId').change(function () {
+    var stateId = $(this).val();
+    console.log("Selected State ID: " + stateId); // Debugging statement
+    if (stateId) {
+                    var url = '@Url.Action("GetCitiesByState", "Employee")/' + stateId;
+        console.log("Request URL: " + url); // Log the URL
 
-                                .emp-details {
-                                    padding: 20px;
-                                    flex: 1;
-                                }
+        $.get(url, function (data) {
+            console.log("Response data:", data); // Log response data
+            var cityDropdown = $('#CityId');
+            cityDropdown.empty();
+            cityDropdown.append('<option value="">-- Select City --</option>');
+            $.each(data, function (index, item) {
+                cityDropdown.append(new Option(item.name, item.cityId));
+            });
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+            console.error("Error getting cities: ", textStatus, errorThrown);
+            console.error("Response Text: " + jqXHR.responseText); // Log response text
+            console.error("Status: " + jqXHR.status); // Log status
+        });
+    } else {
+        $('#CityId').empty().append('<option value="">-- Select City --</option>');
+    }
+});
 
-                                .emp-name {
-                                    font-size: 20px;
-                                    font-weight: bold;
-                                    color: #333;
-                                    margin-bottom: 5px;
-                                }
-
-                                .emp-designation {
-                                    font-size: 16px;
-                                    color: #777;
-                                    margin-bottom: 10px;
-                                }
-
-                                .emp-role {
-                                    font-size: 14px;
-                                    color: #555;
-                                    margin-bottom: 15px;
-                                }
-
-                                .div-remove-card {
-                                    padding-right: 15px;
-                                }
-
-                                .div-remove-card button {
-                                    background-color: transparent;
-                                    border: none;
-                                    cursor: pointer;
-                                    padding: 0;
-                                }
-
-                                .div-remove-card button img {
-                                    width: 50px;
-                                    height: 50px;
-                                }
-                            </style>
-
-                            <div class="card">
-                                <img src="${source}" alt="Employee Image">
-                                <div class="emp-details">
-                                    <div class="emp-name">${name}</div>
-                                    <div class="emp-designation"><i>${designation}</i></div>
-                                    <div class="emp-role">${email}</div>
-                                </div>
-                                <div class="div-remove-card">
-                                    <button class="delete-btn">
-                                        <img src="/Images/cardjs/delete.png" alt="Delete Button">
-                                    </button>
-                                </div>
-                            </div>`;
-
-                $('.employee-list').append(employeedetails);
-
-                $('.employee-list').on('click', '.delete-btn', function () {
-                    $(this).closest('.card').remove();
-                });
-            }
         });
     </script>
-</body>
-</html>
+}
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

@@ -59,7 +59,7 @@ namespace StudentPortal1.Controllers
                     {
                         //ViewBag.Message = "User was registered! Please Login";
                         TempData["Message"] = "User was registered! Please login.";
-                        return RedirectToAction("Register","Auth");
+                        return RedirectToAction("Login","Auth");
                     }
                 }
             }
@@ -99,14 +99,14 @@ namespace StudentPortal1.Controllers
 
 
                         // Update LastLoginDate in Employee table using raw SQL query
-                        string sql = "UPDATE Employees SET LastLoginDate = @LastLoginDate WHERE EmpId = @UserId";
-                        var parameters = new[]
-                        {
-                            new Microsoft.Data.SqlClient.SqlParameter("@LastLoginDate", DateTime.UtcNow),
-                            new Microsoft.Data.SqlClient.SqlParameter("@UserId", user.Id)
-                        };
+                        //string sql = "UPDATE Employees SET LastLoginDate = @LastLoginDate WHERE EmpId = @UserId";
+                        //var parameters = new[]
+                        //{
+                        //    new Microsoft.Data.SqlClient.SqlParameter("@LastLoginDate", DateTime.UtcNow),
+                        //    new Microsoft.Data.SqlClient.SqlParameter("@UserId", user.Id)
+                        //};
 
-                        var count=await _context.Database.ExecuteSqlRawAsync(sql, parameters);
+                        //var count=await _context.Database.ExecuteSqlRawAsync(sql, parameters);
 
                         var response = new LoginResponceDto
                         {
@@ -117,7 +117,7 @@ namespace StudentPortal1.Controllers
                         // You can set a cookie like this
                         HttpContext.Response.Cookies.Append("JwtToken", jwtToken);
                       //  TempData["Message"] = "User was registered! Please login.";
-                        return RedirectToAction("Index", "Student"); // Redirect to some secure area
+                        return RedirectToAction("Index", "Employee"); // Redirect to some secure area
                     }
                 }
             }

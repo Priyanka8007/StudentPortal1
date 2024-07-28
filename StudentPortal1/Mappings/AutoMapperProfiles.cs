@@ -17,13 +17,18 @@ namespace StudentPortal1.Mappings
 
             // Mapping between UpdateStudentRequestDto and Student
             CreateMap<UpdateDtos, Student>();
-            //  CreateMap<DeleteDtos, Student>();
-
-
-            CreateMap<Employee, EmployeeDto>().ReverseMap();
+            CreateMap<Employee, EmployeeDto>();
+            CreateMap<EmployeeDto, Employee>();
+            // CreateMap<Employee, EmployeeDto>().ReverseMap();
 
             CreateMap<AddEmployeeDto, Employee>().ReverseMap();
-            CreateMap<UpdateEmployeeDto, Employee>().ReverseMap();
+            //  CreateMap< EmployeeDto,>().ReverseMap();
+            CreateMap<City, CityDto>();
+            CreateMap<CityDto, City>();
+            CreateMap<State, StateDto>().ReverseMap();
+            CreateMap<Country, CountryDto>().ReverseMap();
+            CreateMap<Payroll, PayrollDto>().ReverseMap();
+            CreateMap< PayrollDto, Payroll>().ReverseMap();
         }
     }
 }

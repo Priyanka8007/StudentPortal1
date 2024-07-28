@@ -1,0 +1,95 @@
+﻿@model IEnumerable<StudentPortal1.Models.Dtos.PayrollDto>
+
+@{
+    ViewData["Title"] = "Payrolls";
+}
+
+<h2>Payrolls</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Employee Id</th>
+            <th>Base Salary</th>
+            <th>Days Worked</th>
+            <th>Performance Bonus</th>
+            <th>Deductions</th>
+            <th>Total Salary</th>
+            <th>Pay Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td id="employeeId-@item.PayrollId">@item.EmployeeId</td>
+                <td id="baseSalary-@item.PayrollId">@item.BaseSalary.ToString("C")</td>
+                <td id="daysWorked-@item.PayrollId">@item.DaysWorked</td>
+                <td id="performanceBonus-@item.PayrollId">@item.PerformanceBonus.ToString("C")</td>
+                <td id="deductions-@item.PayrollId">@item.Deductions.ToString("C")</td>
+                <td id="totalSalary-@item.PayrollId">@item.TotalSalary.ToString("C")</td>
+                <td>@item.PayDate.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.PayrollId" class="btn btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.PayrollId" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.PayrollId" class="btn btn-danger">Delete</a>
+                    <button type="button" onclick="generatePayslip('@item.EmployeeId')">Generate Payslip</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-success">Create New Payroll</a>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        async function fetchEmployeeData(employeeId) {
+            return $.ajax({
+                url: '@Url.Action("GetEmployeeById", "Payroll")',
+                method: 'GET',
+                data: { id: employeeId },
+                dataType: 'json'
+            });
+        }
+
+        async function fetchPayrollData(employeeId) {
+            return $.ajax({
+                url: '@Url.Action("GetPayrollByEmployeeId", "Payroll")',
+                method: 'GET',
+                data: { employeeId: employeeId },
+                dataType: 'json'
+            });
+        }
+
+        async function generatePayslip(employeeId) {
+            try {
+                const [employee, payroll] = await Promise.all([
+                    fetchEmployeeData(employeeId),
+                    fetchPayrollData(employeeId)
+                ]);
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Set the font to Courier
+                doc.setFont('Courier');
+
+                // Add content to the document
+                doc.text("Payslip Details", 10, 10);
+                doc.text(`Employee: ${employee.empName}`, 10, 20);
+                doc.text(`Total Salary: ${payroll.totalSalary}`, 10, 30);
+
+                // Save the PDF
+                doc.save('Payslip.pdf');
+            } catch (error) {
+                alert('Failed to generate payslip.');
+                console.error(error);
+            }
+        }
+    </script>
+}

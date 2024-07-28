@@ -1,24 +1,40 @@
-﻿namespace StudentPortal1.Models.Dtos
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace StudentPortal1.Models.Dtos
 {
     public class AddEmployeeDto
     {
+        public Guid EmpId { get; set; }
+
+        [Required]
+        [StringLength(100)]
         public string EmpName { get; set; }
 
+        [Range(18, 65)]
         public int Age { get; set; }
 
+        [Required]
         public string Gender { get; set; }
 
-        public string Designation { set; get; }
+        [Required]
+        [StringLength(100)]
+        public string Designation { get; set; }
 
-        //create dropdown for this from database
-        public string Country { set; get; }
+        [Required]
+        public int CountryId { get; set; }
 
-        public string State { set; get; }
+        [Required]
+        public int StateId { get; set; }
 
-        public string City { set; get; }
+        [Required]
+        public int CityId { get; set; }
 
-        public string EmailId { set; get; }
+        [Required]
+        [EmailAddress]
+        public string EmailId { get; set; }
 
-        public string Pincode { set; get; }
+        [Required]
+        [StringLength(6, MinimumLength = 6)]
+        public string Pincode { get; set; }
     }
 }

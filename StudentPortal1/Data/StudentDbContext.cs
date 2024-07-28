@@ -13,6 +13,7 @@ namespace StudentPortal1.Data
         }
         public DbSet<Student> Students { set; get; }
         public DbSet<Person>Persons { set; get; }
+      //  public DbSet<Employee> Employees { set; get; }
 
     }
 
