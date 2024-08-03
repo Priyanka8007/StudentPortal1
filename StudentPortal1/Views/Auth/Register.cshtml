@@ -2,37 +2,117 @@
 
 @{
     ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure your layout file is correctly referenced.
 }
 
-<h2>@ViewData["Title"]</h2>
-@if (TempData["Message"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["Message"]
-    </div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["Error"]
-    </div>
-}
+@* Custom CSS *@
+<style>
+    .main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* flex-direction: column; */
+    }
 
-<form asp-action="Register" method="post">
-    <div class="form-group">
-        <label asp-for="UserName"></label>
-        <input asp-for="UserName" class="form-control" />
-        <span asp-validation-for="UserName" class="text-danger"></span>
+    .login-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .login-container {
+        width: 400px;
+        padding: 20px;
+        border-radius: 20px;
+        background-color: violet;
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+
+    .img1 {
+        max-width: 100%;
+        height: 250px;
+        width: 300px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        margin-top: 20px;
+        margin-right: 90px;
+    }
+
+    .img2 {
+        max-width: 100%;
+        height: 250px;
+        width: 300px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        margin-top: 20px;
+        margin-left: 90px;
+    }
+
+    .btn-custom {
+        background-color: green;
+        border-color: #007bff;
+        color: white;
+        font-size: 1.25rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 5px;
+        margin-top: 5px;
+        margin-left: 110px;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .btn-custom:hover {
+        background-color: blueviolet;
+        border-color: #0056b3;
+    }
+</style>
+
+<div class="main">
+    <div>
+        <img class="img1" src="~/images/log3.jpg" alt="Register Image" />
     </div>
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
+    <div class="login-container">
+        <h2>@ViewData["Title"]</h2>
+
+        @if (TempData["Message"] != null)
+        {
+                <div class="alert alert-success">
+                @TempData["Message"]
+                </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+                <div class="alert alert-danger">
+                @TempData["Error"]
+                </div>
+        }
+
+        <form asp-action="Register" method="post">
+            <div class="form-group">
+                <label asp-for="UserName"></label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Roles"></label>
+                <input asp-for="Roles" class="form-control" />
+                <span asp-validation-for="Roles" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-custom">Register</button>
+        </form>
+        <div class="register-link">
+            <p>If Registered then please Login <a href="@Url.Action("Login", "Auth")">Please Login</a></p>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Roles"></label>
-        <input asp-for="Roles" class="form-control" />
-        <span asp-validation-for="Roles" class="text-danger"></span>
+    <div>
+        <img class="img2" src="~/images/log.jpg" alt="Register Image" />
     </div>
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
+</div>
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+}

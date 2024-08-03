@@ -8,6 +8,8 @@ using StudentPortal1.Repositories;
 using System.Linq;
 using System.Threading.Tasks;
 using StudentPortal1.Models.Dtos;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace StudentPortal1.Controllers
 {
@@ -17,12 +19,14 @@ namespace StudentPortal1.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly ITokenRepository tokenRepository;
        private readonly EmployeeDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository,EmployeeDbContext context)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository,EmployeeDbContext context, IConfiguration configuration)
         {
             this.userManager = userManager;
             this.tokenRepository = tokenRepository;
-          _context = context;
+            _context = context;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -38,9 +42,12 @@ namespace StudentPortal1.Controllers
         {
             if (!ModelState.IsValid)
             {
+               
+
+                // Return the view with the ModelState errors
                 return View(registerdto);
             }
-
+           
             var identityUser = new IdentityUser
             {
                 UserName = registerdto.UserName,
@@ -83,6 +90,59 @@ namespace StudentPortal1.Controllers
             {
                 return View(loginRequestDto);
             }
+
+            //-------------------------------Stored Procedure calls---------------------------------------
+
+            // Retrieve connection string from configuration
+            var connectionString = _configuration.GetConnectionString("StudentAuthConnectionString");
+
+            var passwordIsValid = false;
+            var errorMessage = string.Empty;
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.CommandText = "ValidatePassword";
+                        command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        // Adding parameters
+                        command.Parameters.Add(new SqlParameter("@Password", loginRequestDto.Password));
+                        command.Parameters.Add(new SqlParameter("@UserName", loginRequestDto.UserName));
+                        var isValidParam = new SqlParameter("@IsValid", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+                        var errorParam = new SqlParameter("@ErrorMessage", System.Data.SqlDbType.NVarChar, 200) { Direction = System.Data.ParameterDirection.Output };
+
+                        command.Parameters.Add(isValidParam);
+                        command.Parameters.Add(errorParam);
+
+                        // Execute stored procedure
+                        await command.ExecuteNonQueryAsync();
+
+                        // Retrieve output parameters
+                        passwordIsValid = (bool)isValidParam.Value;
+                        errorMessage = (string)errorParam.Value;
+                    }
+                }
+                ViewBag.ModelState = ModelState;
+
+                if (!passwordIsValid)
+                {
+                    ModelState.AddModelError(string.Empty, errorMessage);
+                    return View(loginRequestDto);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exception, log error, or return a specific view with an error message
+                ModelState.AddModelError(string.Empty, "An error occurred while validating the password.");
+                return View(loginRequestDto);
+            }
+            ////-------------------------------Stored Procedure Ends---------------------------------------
+
 
             var user = await userManager.FindByEmailAsync(loginRequestDto.UserName);
 

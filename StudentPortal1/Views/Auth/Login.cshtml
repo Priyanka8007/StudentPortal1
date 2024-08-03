@@ -2,38 +2,118 @@
 
 @{
     ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure your layout file is correctly referenced.
 }
 
-<h2>Login</h2>
+@* Custom CSS *@
+<style>
 
-@if (TempData["Message"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["Message"]
-    </div>
-}
+    .main{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      /*   flex-direction: column; */
+    }
+   
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["Error"]
-    </div>
-}
+    .login-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-<form asp-action="Login" method="post">
-    <div class="form-group">
-        <label asp-for="UserName"></label>
-        <input asp-for="UserName" class="form-control" />
-        <span asp-validation-for="UserName" class="text-danger"></span>
+    
+    .login-container{
+       /*  height:100px;
+        width:100px; */
+        width:400px;
+        padding: 20px;
+        border-radius:20px;
+        background-color:violet;
+        margin-top:40px ;
+        margin-bottom: 40px
+    }
+
+    .img1 {
+        max-width: 100%;
+        height: 250px;
+        width:300px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        margin-top: 20px;
+        margin-right: 90px;
+    }
+
+    .img2 {
+        max-width: 100%;
+        height: 250px;
+        width: 300px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        margin-top: 20px;
+        margin-left:90px;
+    }
+
+    .btn-custom {
+        background-color: green;
+        border-color: #007bff;
+        color: white;
+        font-size: 1.25rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 5px;
+        margin-top:5px;
+        margin-left:110px;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+        .btn-custom:hover {
+            background-color: blueviolet;
+            border-color: #0056b3;
+        }
+</style>
+<div class="main">
+    <div>
+        <img class="img1" src="~/images/log3.jpg" alt="Login Image" />
     </div>
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" class="form-control" type="password" />
-        <span asp-validation-for="Password" class="text-danger"></span>
+<div class="login-container">
+    <h2>Login</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Message"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+    <form asp-action="Login" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="UserName" class="control-label"></label>
+            <input asp-for="UserName" class="form-control" />
+            @* <span asp-validation-for="UserName" class="text-danger"></span> *@
+        </div>
+        <div class="form-group">
+            <label asp-for="Password" class="control-label"></label>
+            <input asp-for="Password" class="form-control" type="password" />
+           @*  <span asp-validation-for="Password" class="text-danger"></span> *@
+        </div>
+            <button type="submit" class="btn btn-primary btn-block btn-custom">Login</button>
+    </form>
+        <div class="register-link">
+            <p>Not registered? <a href="@Url.Action("Register", "Auth")">Please register first</a></p>
+        </div>
+</div>
+    <div>
+        <img class="img2" src="~/images/log.jpg" alt="Login Image" />
     </div>
-    <button type="submit" class="btn btn-primary">Login</button>
-</form>
+</div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

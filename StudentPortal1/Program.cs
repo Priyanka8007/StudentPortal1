@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -35,6 +36,7 @@ namespace StudentPortal1
 
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
             //builder.Services.AddAntiforgery(options =>
             //{
             //    options.HeaderName = "RequestVerificationToken";
@@ -75,18 +77,18 @@ namespace StudentPortal1
             builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<StudentAuthDbContext>();
 
 
-            builder.Services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 6;
-                options.Password.RequiredUniqueChars = 1;
+            //builder.Services.Configure<IdentityOptions>(options =>
+            //{
+            //    options.Password.RequireDigit = false;
+            //    options.Password.RequireLowercase = false;
+            //    options.Password.RequireNonAlphanumeric = false;
+            //    options.Password.RequireUppercase = false;
+            //    options.Password.RequiredLength = 6;
+            //    options.Password.RequiredUniqueChars = 1;
 
 
 
-            });
+            //});
             builder.Services.AddScoped<IStudentRepository, SqlStudentRepository>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
