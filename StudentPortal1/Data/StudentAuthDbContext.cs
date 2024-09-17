@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using StudentPortal1.Models;
 using System.Reflection.Emit;
 
 namespace StudentPortal1.Data
@@ -12,7 +12,8 @@ namespace StudentPortal1.Data
         {
 
         }
-       
+        public DbSet<UserActivity> UserActivities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

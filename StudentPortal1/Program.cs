@@ -7,6 +7,7 @@ using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using StudentPortal1.Data;
+using StudentPortal1.Filters;
 using StudentPortal1.Mappings;
 using StudentPortal1.Repositories;
 using StudentPortal1.Services;
@@ -85,10 +86,7 @@ namespace StudentPortal1
             //    options.Password.RequireUppercase = false;
             //    options.Password.RequiredLength = 6;
             //    options.Password.RequiredUniqueChars = 1;
-
-
-
-            //});
+                        //});
             builder.Services.AddScoped<IStudentRepository, SqlStudentRepository>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
@@ -99,7 +97,22 @@ namespace StudentPortal1
             builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
             builder.Services.AddScoped<IPayrollService, PayrollService>();
 
+            // Register the custom action filter
+            //builder.Services.AddScoped<EmployeeActionFilter>();
+
+            //builder.Services.AddControllers(options =>
+            //{
+            //    options.Filters.Add<EmployeeActionFilter>();
+            //});
+            // Register the ActivityLoggingFilter
+            builder.Services.AddScoped<ActivityLoggingFilter>();
+
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<ActivityLoggingFilter>();
+            });
             // Add HttpClient
+         
             builder.Services.AddHttpClient();
 
             // Configure authentication

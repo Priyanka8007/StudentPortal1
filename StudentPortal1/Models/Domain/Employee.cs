@@ -38,8 +38,10 @@ namespace StudentPortal1.Models.Domain
         public int CityId { get; set; }
         public City City { get; set; }
 
-       
-       
+        [Required]
         public string Pincode { get; set; }
+
+       // public ICollection<EmployeeSkill> EmployeeSkills { get; set; }
+       // public ICollection<EmployeeCertification> EmployeeCertifications { get; set; }
     }
 }

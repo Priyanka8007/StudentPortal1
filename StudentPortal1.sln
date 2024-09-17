@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudentPortal1", "StudentPortal1\StudentPortal1.csproj", "{D1AA9AC2-2F09-4B11-AC64-344B093B231D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StudentPortal1", "StudentPortal1\StudentPortal1.csproj", "{D1AA9AC2-2F09-4B11-AC64-344B093B231D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsumeWebApi", "ConsumeWebApi\ConsumeWebApi.csproj", "{2C2D8DA4-41B6-4162-9672-1DCC5E5F9529}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{D1AA9AC2-2F09-4B11-AC64-344B093B231D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1AA9AC2-2F09-4B11-AC64-344B093B231D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1AA9AC2-2F09-4B11-AC64-344B093B231D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C2D8DA4-41B6-4162-9672-1DCC5E5F9529}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C2D8DA4-41B6-4162-9672-1DCC5E5F9529}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C2D8DA4-41B6-4162-9672-1DCC5E5F9529}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C2D8DA4-41B6-4162-9672-1DCC5E5F9529}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

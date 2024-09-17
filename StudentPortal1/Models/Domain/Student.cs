@@ -12,6 +12,5 @@ namespace StudentPortal1.Models.Domain
 
         public int Age { get; set; }
 
-
     }
 }

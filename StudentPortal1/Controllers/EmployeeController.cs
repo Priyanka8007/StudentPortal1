@@ -8,6 +8,7 @@ using Syncfusion.EJ2.FileManager.Base;
 
 namespace StudentPortal1.Controllers
 {
+   // [ServiceFilter(typeof(EmployeeActionFilter))]
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
@@ -30,7 +31,9 @@ namespace StudentPortal1.Controllers
             _mapper = mapper;
 
         }
+
         [HttpGet]
+       // [ServiceFilter(typeof(EmployeeActionFilter))]
         public async Task<IActionResult> GetEmployees(int page = 1, int pageSize = 3)
         {
             var employees = await _employeeRepository.GetAllAsync();
@@ -51,7 +54,7 @@ namespace StudentPortal1.Controllers
             return View();
         }
 
-
+       // [ServiceFilter(typeof(EmployeeActionFilter))]
         public async Task<IActionResult> Create()
         {
             var employeeDto = new EmployeeDto();

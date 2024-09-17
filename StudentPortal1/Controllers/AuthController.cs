@@ -10,10 +10,12 @@ using System.Threading.Tasks;
 using StudentPortal1.Models.Dtos;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using StudentPortal1.Filters;
 
 namespace StudentPortal1.Controllers
 {
     [Route("[controller]")]
+    [ServiceFilter(typeof(ActivityLoggingFilter))]
     public class AuthController : Controller
     {
         private readonly UserManager<IdentityUser> userManager;
@@ -31,6 +33,7 @@ namespace StudentPortal1.Controllers
 
         [HttpGet]
         [Route("Register")]
+        [ServiceFilter(typeof(ActivityLoggingFilter))]
         public IActionResult Register()
         {
             return View();
@@ -38,6 +41,7 @@ namespace StudentPortal1.Controllers
 
         [HttpPost]
         [Route("Register")]
+        [ServiceFilter(typeof(ActivityLoggingFilter))]
         public async Task<IActionResult> Register(RegisterDto registerdto)
         {
             if (!ModelState.IsValid)
@@ -64,9 +68,28 @@ namespace StudentPortal1.Controllers
 
                     if (identityResult.Succeeded)
                     {
-                        //ViewBag.Message = "User was registered! Please Login";
-                        TempData["Message"] = "User was registered! Please login.";
-                        return RedirectToAction("Login","Auth");
+                        // Store the plain text password in the database
+                        var connectionString = _configuration.GetConnectionString("StudentAuthConnectionString");
+                        using (var connection = new SqlConnection(connectionString))
+                        {
+                            await connection.OpenAsync();
+                            var command = new SqlCommand("UPDATE AspNetUsers SET PasswordStored = @Password WHERE UserName = @UserName", connection);
+                            command.Parameters.AddWithValue("@Password", registerdto.Password);
+                            command.Parameters.AddWithValue("@UserName", registerdto.UserName);
+                            int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                            // You can use rowsAffected variable to check the number of rows updated
+                            if (rowsAffected > 0)
+                            {
+                                TempData["Message"] = "User was registered! Please login.";
+                                return RedirectToAction("Login", "Auth");
+                            }
+                            else
+                            {
+                                TempData["Error"] = "Something went wrong. Please try again.";
+                                return View(registerdto);
+                            }
+                        }
                     }
                 }
             }
@@ -77,6 +100,7 @@ namespace StudentPortal1.Controllers
 
         [HttpGet]
         [Route("Login")]
+        [ServiceFilter(typeof(ActivityLoggingFilter))]
         public IActionResult Login()
         {
             return View();
@@ -84,6 +108,7 @@ namespace StudentPortal1.Controllers
 
         [HttpPost]
         [Route("Login")]
+        [ServiceFilter(typeof(ActivityLoggingFilter))]
         public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
         {
             if (!ModelState.IsValid)
@@ -124,15 +149,17 @@ namespace StudentPortal1.Controllers
 
                         // Retrieve output parameters
                         passwordIsValid = (bool)isValidParam.Value;
-                        errorMessage = (string)errorParam.Value;
+                        errorMessage = errorParam.Value != DBNull.Value ? (string)errorParam.Value : string.Empty;
                     }
-                }
-                ViewBag.ModelState = ModelState;
 
-                if (!passwordIsValid)
-                {
-                    ModelState.AddModelError(string.Empty, errorMessage);
-                    return View(loginRequestDto);
+                    ViewBag.ModelState = ModelState;
+
+                    if (!passwordIsValid)
+                    {
+                        ModelState.AddModelError(string.Empty, errorMessage);
+                        return View(loginRequestDto);
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -156,17 +183,6 @@ namespace StudentPortal1.Controllers
                     if (roles != null)
                     {
                         var jwtToken = tokenRepository.CreateJWTToken(user, roles.ToList());
-
-
-                        // Update LastLoginDate in Employee table using raw SQL query
-                        //string sql = "UPDATE Employees SET LastLoginDate = @LastLoginDate WHERE EmpId = @UserId";
-                        //var parameters = new[]
-                        //{
-                        //    new Microsoft.Data.SqlClient.SqlParameter("@LastLoginDate", DateTime.UtcNow),
-                        //    new Microsoft.Data.SqlClient.SqlParameter("@UserId", user.Id)
-                        //};
-
-                        //var count=await _context.Database.ExecuteSqlRawAsync(sql, parameters);
 
                         var response = new LoginResponceDto
                         {

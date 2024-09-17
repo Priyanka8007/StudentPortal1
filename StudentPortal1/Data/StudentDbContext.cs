@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using StudentPortal1.Models;
 using StudentPortal1.Models.Domain;
 using StudentPortal1.Models.Dtos;
 
@@ -11,6 +12,7 @@ namespace StudentPortal1.Data
         {
 
         }
+       
         public DbSet<Student> Students { set; get; }
         public DbSet<Person>Persons { set; get; }
       //  public DbSet<Employee> Employees { set; get; }
