@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentPortal1.Data;
 
 #nullable disable
 
-namespace StudentPortal1.Migrations.EmployeeDb
+namespace StudentPortal1.Migrations
 {
     [DbContext(typeof(EmployeeDbContext))]
-    [Migration("20240722114018_AddPayrollTable")]
-    partial class AddPayrollTable
+    partial class EmployeeDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,6 +171,64 @@ namespace StudentPortal1.Migrations.EmployeeDb
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("StudentPortal1.Models.Domain.EmployeeCertification", b =>
+                {
+                    b.Property<Guid>("EmployeeCertificationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CertificationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateObtained")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EmpId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EmployeeSkillId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("IssuingAuthority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EmployeeCertificationId");
+
+                    b.HasIndex("EmpId");
+
+                    b.HasIndex("EmployeeSkillId");
+
+                    b.ToTable("EmployeeCertifications");
+                });
+
+            modelBuilder.Entity("StudentPortal1.Models.Domain.EmployeeSkill", b =>
+                {
+                    b.Property<Guid>("EmployeeSkillId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("EmpId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ProficiencyLevel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SkillName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EmployeeSkillId");
+
+                    b.HasIndex("EmpId");
+
+                    b.ToTable("EmployeeSkills");
+                });
+
             modelBuilder.Entity("StudentPortal1.Models.Domain.Payroll", b =>
                 {
                     b.Property<Guid>("PayrollId")
@@ -298,6 +353,36 @@ namespace StudentPortal1.Migrations.EmployeeDb
                     b.Navigation("State");
                 });
 
+            modelBuilder.Entity("StudentPortal1.Models.Domain.EmployeeCertification", b =>
+                {
+                    b.HasOne("StudentPortal1.Models.Domain.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmpId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentPortal1.Models.Domain.EmployeeSkill", "EmployeeSkill")
+                        .WithMany("EmployeeCertifications")
+                        .HasForeignKey("EmployeeSkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("EmployeeSkill");
+                });
+
+            modelBuilder.Entity("StudentPortal1.Models.Domain.EmployeeSkill", b =>
+                {
+                    b.HasOne("StudentPortal1.Models.Domain.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmpId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
             modelBuilder.Entity("StudentPortal1.Models.Domain.Payroll", b =>
                 {
                     b.HasOne("StudentPortal1.Models.Domain.Employee", "Employee")
@@ -323,6 +408,11 @@ namespace StudentPortal1.Migrations.EmployeeDb
             modelBuilder.Entity("StudentPortal1.Models.Domain.Country", b =>
                 {
                     b.Navigation("States");
+                });
+
+            modelBuilder.Entity("StudentPortal1.Models.Domain.EmployeeSkill", b =>
+                {
+                    b.Navigation("EmployeeCertifications");
                 });
 
             modelBuilder.Entity("StudentPortal1.Models.Domain.State", b =>

@@ -10,12 +10,11 @@ using System.Threading.Tasks;
 using StudentPortal1.Models.Dtos;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using StudentPortal1.Filters;
+//using StudentPortal1.Filters;
 
 namespace StudentPortal1.Controllers
 {
     [Route("[controller]")]
-    [ServiceFilter(typeof(ActivityLoggingFilter))]
     public class AuthController : Controller
     {
         private readonly UserManager<IdentityUser> userManager;
@@ -33,7 +32,7 @@ namespace StudentPortal1.Controllers
 
         [HttpGet]
         [Route("Register")]
-        [ServiceFilter(typeof(ActivityLoggingFilter))]
+     //   [ServiceFilter(typeof(ActivityLoggingFilter))]
         public IActionResult Register()
         {
             return View();
@@ -41,8 +40,7 @@ namespace StudentPortal1.Controllers
 
         [HttpPost]
         [Route("Register")]
-        [ServiceFilter(typeof(ActivityLoggingFilter))]
-        public async Task<IActionResult> Register(RegisterDto registerdto)
+               public async Task<IActionResult> Register(RegisterDto registerdto)
         {
             if (!ModelState.IsValid)
             {
@@ -69,27 +67,27 @@ namespace StudentPortal1.Controllers
                     if (identityResult.Succeeded)
                     {
                         // Store the plain text password in the database
-                        var connectionString = _configuration.GetConnectionString("StudentAuthConnectionString");
-                        using (var connection = new SqlConnection(connectionString))
-                        {
-                            await connection.OpenAsync();
-                            var command = new SqlCommand("UPDATE AspNetUsers SET PasswordStored = @Password WHERE UserName = @UserName", connection);
-                            command.Parameters.AddWithValue("@Password", registerdto.Password);
-                            command.Parameters.AddWithValue("@UserName", registerdto.UserName);
-                            int rowsAffected = await command.ExecuteNonQueryAsync();
+                        //var connectionString = _configuration.GetConnectionString("StudentAuthConnectionString");
+                        //using (var connection = new SqlConnection(connectionString))
+                        //{
+                            //await connection.OpenAsync();
+                            //var command = new SqlCommand("UPDATE AspNetUsers SET PasswordStored = @Password WHERE UserName = @UserName", connection);
+                            //command.Parameters.AddWithValue("@Password", registerdto.Password);
+                            //command.Parameters.AddWithValue("@UserName", registerdto.UserName);
+                            //int rowsAffected = await command.ExecuteNonQueryAsync();
 
                             // You can use rowsAffected variable to check the number of rows updated
-                            if (rowsAffected > 0)
-                            {
+                            //if (rowsAffected > 0)
+                            //{
                                 TempData["Message"] = "User was registered! Please login.";
                                 return RedirectToAction("Login", "Auth");
-                            }
-                            else
-                            {
-                                TempData["Error"] = "Something went wrong. Please try again.";
-                                return View(registerdto);
-                            }
-                        }
+                           // }
+                           // else
+                           // {
+                                //TempData["Error"] = "Something went wrong. Please try again.";
+                                //return View(registerdto);
+                           // }
+                        
                     }
                 }
             }
@@ -100,7 +98,7 @@ namespace StudentPortal1.Controllers
 
         [HttpGet]
         [Route("Login")]
-        [ServiceFilter(typeof(ActivityLoggingFilter))]
+       // [ServiceFilter(typeof(ActivityLoggingFilter))]
         public IActionResult Login()
         {
             return View();
@@ -108,7 +106,7 @@ namespace StudentPortal1.Controllers
 
         [HttpPost]
         [Route("Login")]
-        [ServiceFilter(typeof(ActivityLoggingFilter))]
+       // [ServiceFilter(typeof(ActivityLoggingFilter))]
         public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
         {
             if (!ModelState.IsValid)
@@ -119,56 +117,56 @@ namespace StudentPortal1.Controllers
             //-------------------------------Stored Procedure calls---------------------------------------
 
             // Retrieve connection string from configuration
-            var connectionString = _configuration.GetConnectionString("StudentAuthConnectionString");
+            //var connectionString = _configuration.GetConnectionString("StudentAuthConnectionString");
 
-            var passwordIsValid = false;
-            var errorMessage = string.Empty;
+            //var passwordIsValid = false;
+            //var errorMessage = string.Empty;
 
-            try
-            {
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    await connection.OpenAsync();
+            //try
+            //{
+            //    using (var connection = new SqlConnection(connectionString))
+            //    {
+            //        await connection.OpenAsync();
 
-                    using (var command = connection.CreateCommand())
-                    {
-                        command.CommandText = "ValidatePassword";
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
+            //        using (var command = connection.CreateCommand())
+            //        {
+            //            command.CommandText = "ValidatePassword";
+            //            command.CommandType = System.Data.CommandType.StoredProcedure;
 
-                        // Adding parameters
-                        command.Parameters.Add(new SqlParameter("@Password", loginRequestDto.Password));
-                        command.Parameters.Add(new SqlParameter("@UserName", loginRequestDto.UserName));
-                        var isValidParam = new SqlParameter("@IsValid", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
-                        var errorParam = new SqlParameter("@ErrorMessage", System.Data.SqlDbType.NVarChar, 200) { Direction = System.Data.ParameterDirection.Output };
+            //            // Adding parameters
+            //            command.Parameters.Add(new SqlParameter("@Password", loginRequestDto.Password));
+            //            command.Parameters.Add(new SqlParameter("@UserName", loginRequestDto.UserName));
+            //            var isValidParam = new SqlParameter("@IsValid", System.Data.SqlDbType.Bit) { Direction = System.Data.ParameterDirection.Output };
+            //            var errorParam = new SqlParameter("@ErrorMessage", System.Data.SqlDbType.NVarChar, 200) { Direction = System.Data.ParameterDirection.Output };
 
-                        command.Parameters.Add(isValidParam);
-                        command.Parameters.Add(errorParam);
+            //            command.Parameters.Add(isValidParam);
+            //            command.Parameters.Add(errorParam);
 
-                        // Execute stored procedure
-                        await command.ExecuteNonQueryAsync();
+            //            // Execute stored procedure
+            //            await command.ExecuteNonQueryAsync();
 
-                        // Retrieve output parameters
-                        passwordIsValid = (bool)isValidParam.Value;
-                        errorMessage = errorParam.Value != DBNull.Value ? (string)errorParam.Value : string.Empty;
-                    }
+            //            // Retrieve output parameters
+            //            passwordIsValid = (bool)isValidParam.Value;
+            //            errorMessage = errorParam.Value != DBNull.Value ? (string)errorParam.Value : string.Empty;
+            //        }
 
-                    ViewBag.ModelState = ModelState;
+            //        ViewBag.ModelState = ModelState;
 
-                    if (!passwordIsValid)
-                    {
-                        ModelState.AddModelError(string.Empty, errorMessage);
-                        return View(loginRequestDto);
-                    }
+            //        if (!passwordIsValid)
+            //        {
+            //            ModelState.AddModelError(string.Empty, errorMessage);
+            //            return View(loginRequestDto);
+            //        }
 
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle exception, log error, or return a specific view with an error message
-                ModelState.AddModelError(string.Empty, "An error occurred while validating the password.");
-                return View(loginRequestDto);
-            }
-            ////-------------------------------Stored Procedure Ends---------------------------------------
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Handle exception, log error, or return a specific view with an error message
+            //    ModelState.AddModelError(string.Empty, "An error occurred while validating the password.");
+            //    return View(loginRequestDto);
+            //}
+            //////-------------------------------Stored Procedure Ends---------------------------------------
 
 
             var user = await userManager.FindByEmailAsync(loginRequestDto.UserName);

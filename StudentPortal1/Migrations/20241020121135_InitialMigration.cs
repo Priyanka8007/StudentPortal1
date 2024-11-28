@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace StudentPortal1.Migrations.EmployeeDb
+namespace StudentPortal1.Migrations
 {
     /// <inheritdoc />
-    public partial class Initialcreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -115,6 +115,80 @@ namespace StudentPortal1.Migrations.EmployeeDb
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "EmployeeSkills",
+                columns: table => new
+                {
+                    EmployeeSkillId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EmpId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SkillName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProficiencyLevel = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeSkills", x => x.EmployeeSkillId);
+                    table.ForeignKey(
+                        name: "FK_EmployeeSkills_Employees_EmpId",
+                        column: x => x.EmpId,
+                        principalTable: "Employees",
+                        principalColumn: "EmpId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payrolls",
+                columns: table => new
+                {
+                    PayrollId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BaseSalary = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    DaysWorked = table.Column<int>(type: "int", nullable: false),
+                    PerformanceBonus = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Deductions = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalSalary = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    PayDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payrolls", x => x.PayrollId);
+                    table.ForeignKey(
+                        name: "FK_Payrolls_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "EmpId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+    name: "EmployeeCertifications",
+    columns: table => new
+    {
+        EmployeeCertificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+        EmployeeSkillId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+        EmpId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+        CertificationName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+        DateObtained = table.Column<DateTime>(type: "datetime2", nullable: false),
+        ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+        IssuingAuthority = table.Column<string>(type: "nvarchar(max)", nullable: false)
+    },
+    constraints: table =>
+    {
+        table.PrimaryKey("PK_EmployeeCertifications", x => x.EmployeeCertificationId);
+        table.ForeignKey(
+            name: "FK_EmployeeCertifications_EmployeeSkills_EmployeeSkillId",
+            column: x => x.EmployeeSkillId,
+            principalTable: "EmployeeSkills",
+            principalColumn: "EmployeeSkillId",
+            onDelete: ReferentialAction.Cascade);
+        table.ForeignKey(
+            name: "FK_EmployeeCertifications_Employees_EmpId",
+            column: x => x.EmpId,
+            principalTable: "Employees",
+            principalColumn: "EmpId",
+            onDelete: ReferentialAction.NoAction);  // Use NoAction to prevent cascading delete
+    });
+
+
             migrationBuilder.InsertData(
                 table: "Countries",
                 columns: new[] { "CountryId", "Name" },
@@ -154,6 +228,16 @@ namespace StudentPortal1.Migrations.EmployeeDb
                 column: "StateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmployeeCertifications_EmpId",
+                table: "EmployeeCertifications",
+                column: "EmpId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeCertifications_EmployeeSkillId",
+                table: "EmployeeCertifications",
+                column: "EmployeeSkillId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Employees_CityId",
                 table: "Employees",
                 column: "CityId");
@@ -169,6 +253,16 @@ namespace StudentPortal1.Migrations.EmployeeDb
                 column: "StateId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmployeeSkills_EmpId",
+                table: "EmployeeSkills",
+                column: "EmpId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payrolls_EmployeeId",
+                table: "Payrolls",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_States_CountryId",
                 table: "States",
                 column: "CountryId");
@@ -178,10 +272,19 @@ namespace StudentPortal1.Migrations.EmployeeDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Employees");
+                name: "EmployeeCertifications");
+
+            migrationBuilder.DropTable(
+                name: "Payrolls");
 
             migrationBuilder.DropTable(
                 name: "SelectListGroup");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeSkills");
+
+            migrationBuilder.DropTable(
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Cities");

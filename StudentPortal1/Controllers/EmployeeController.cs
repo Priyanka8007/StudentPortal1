@@ -35,6 +35,7 @@ namespace StudentPortal1.Controllers
         [HttpGet]
        // [ServiceFilter(typeof(EmployeeActionFilter))]
         public async Task<IActionResult> GetEmployees(int page = 1, int pageSize = 3)
+        
         {
             var employees = await _employeeRepository.GetAllAsync();
             var totalCount = employees.Count();

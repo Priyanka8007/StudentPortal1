@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff and Works</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Staff Members</h2>
+    <table id="staffTable" border="1" cellpadding="10" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Department</th>
+                <th>Is Currently Assigned</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Works</h2>
+    <table id="workTable" border="1" cellpadding="10" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>ID</th>
+                <th>Task Title</th>
+                <th>Task Description</th>
+                <th>Date Created</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        $(document).ready(function () {
+            // Fetch and display staff members with checkboxes
+            $.ajax({
+                url: '/StaffWorks/GetStaffMembers',
+                type: 'GET',
+                success: function (data) {
+                    var staffTableBody = $('#staffTable tbody');
+                    staffTableBody.empty(); // Clear the table before appending new data
+                    $.each(data, function (index, staff) {
+                        var assigned = staff.isCurrentlyAssigned ? 'Yes' : 'No'; // Handle boolean for assignment
+                        staffTableBody.append(
+                            '<tr>' +
+                            '<td><input type="checkbox" class="staff-checkbox" value="' + staff.id + '"></td>' + // Checkbox column
+                            '<td>' + staff.id + '</td>' +
+                            '<td>' + staff.fullName + '</td>' +
+                            '<td>' + staff.department + '</td>' +
+                            '<td>' + assigned + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                },
+                error: function () {
+                    alert('Failed to load staff members.');
+                }
+            });
+
+            // Fetch and display works with checkboxes
+            $.ajax({
+                url: '/StaffWorks/GetWorks',
+                type: 'GET',
+                success: function (data) {
+                    var workTableBody = $('#workTable tbody');
+                    workTableBody.empty(); // Clear the table before appending new data
+                    $.each(data, function (index, work) {
+                        var formattedDate = new Date(work.dateCreated).toLocaleDateString(); // Format the date
+                        workTableBody.append(
+                            '<tr>' +
+                            '<td><input type="checkbox" class="work-checkbox" value="' + work.id + '"></td>' + // Checkbox column
+                            '<td>' + work.id + '</td>' +
+                            '<td>' + work.taskTitle + '</td>' +
+                            '<td>' + work.taskDescription + '</td>' +
+                            '<td>' + formattedDate + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                },
+                error: function () {
+                    alert('Failed to load works.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

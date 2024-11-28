@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using StudentPortal1.Data;
 using StudentPortal1.Models.Domain;
 using StudentPortal1.Models.Dtos;
 using StudentPortal1.Repositories;
+using System.Data;
+
 
 namespace StudentPortal1.Controllers
 {
@@ -14,12 +19,22 @@ namespace StudentPortal1.Controllers
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IMapper _mapper;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
+        private readonly TempUserDbContext _tempUserDbContext;
 
-        public StudentController(IStudentRepository studentRepository, IMapper mapper)
+        public StudentController(IStudentRepository studentRepository, IMapper mapper, IHttpClientFactory httpClientFactory, IConfiguration configuration, TempUserDbContext tempUserDbContext)
         {
             _studentRepository = studentRepository;
             _mapper = mapper;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
+            _tempUserDbContext= tempUserDbContext;
         }
+
+     
+
+
         [HttpGet ("{id:int}")]
         [Authorize]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
@@ -42,6 +57,51 @@ namespace StudentPortal1.Controllers
         public async Task<IActionResult> Index(string sortOrder, string searchString, int page = 1)
         {
             const int pageSize = 3; // Number of records to display per page
+
+
+            var client = _httpClientFactory.CreateClient();
+
+            // Fetch the user data as a string
+            
+            var usersJson = await client.GetStringAsync("https://jsonplaceholder.typicode.com/users");
+
+            // Ensure usersJson is not null or empty
+            if (string.IsNullOrEmpty(usersJson))
+            {
+                throw new ArgumentNullException("usersJson", "The JSON data is empty.");
+            }
+
+            // Call the stored procedure and pass usersJson as a parameter
+            var connectionString = _configuration.GetConnectionString("StudentConnectionString");
+            using (var connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                using (var command = new SqlCommand("InsertUsersFromJson1", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    // Explicitly define the SqlParameter with NVARCHAR(MAX) type
+                    var jsonDataParameter = new SqlParameter("@JsonData", SqlDbType.NVarChar, -1)
+                    {
+                        Value = usersJson // your JSON string data
+                    };
+                    command.Parameters.Add(jsonDataParameter);
+
+                    // Execute the stored procedure
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+
+            // Optionally deserialize the JSON into TempUser objects and return them in the view
+            //var users = JsonSerializer.Deserialize<List<TempUser>>(usersJson);
+
+            //// Save users to the database (if not handled by the stored procedure)
+            //if (users != null)
+            //{
+            //    await _tempUserDbContext.tempUsers.AddRangeAsync(users);
+            //    await _tempUserDbContext.SaveChangesAsync();
+            //}
 
 
             var students = await _studentRepository.GetAllStudentsAsync();

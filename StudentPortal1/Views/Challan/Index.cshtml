@@ -1,0 +1,651 @@
+﻿@model IEnumerable<StudentPortal1.Models.Domain.LabelTran>
+@{
+    ViewData["Title"] = "Challan Split";
+}
+
+<h2>Challan Split</h2>
+
+<div>
+    <label for="challanno">Challan No:</label>
+    <input type="text" id="challanno" />
+    <button id="showGridButton">Show Grid</button>
+    <button id="splitquantity">Split Quantity</button>
+    <button id="save">Save</button>
+ <button id="generate-pdf">Download LabelTran PDF</button>
+</div> 
+
+<!-- Grid initially hidden -->
+<table class="table table-bordered" id="resultTable" style="margin-top: 20px; display: none;">
+    <thead>
+        <tr>
+            <th>Select</th>
+            <th>Challan No</th>
+            <th>Challan Sr No</th>
+            <th>PO No</th>
+            <th>PO Sr No</th>
+            <th>Item Code</th>
+            <th>Challan Qty</th>
+            <th>Label Qty</th>
+            <th>labelno</th>
+            <th>Action</th> <!-- Added Action column -->
+        </tr>
+    </thead>
+    <tbody id="resultBody">
+        <!-- Dynamic rows will be appended here -->
+    </tbody>
+</table>
+<div>
+    <label for="chartType">Select Chart Type:</label>
+    <select id="chartType" onchange="loadChart()">
+        <option value="bar">Bar Chart</option>
+        <option value="pie">Pie Chart</option>
+        <option value="line">Line Chart</option>
+    </select>
+</div>
+<div id="chartContainer" style="height: 400px;"></div>
+
+<footer>
+    <div style="text-align: center; padding: 10px;">
+        <h10>No.ofpages</h10>
+        <span id="rowcount" style="font-size: small; color: gray;"></span>
+    </div>
+</footer>
+
+<style>
+    /* General Page Styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        margin: 20px;
+    }
+
+    /* Heading Styling */
+    h2 {
+        text-align:center;
+        margin-bottom:20px;
+        color: #4CAF50;
+       
+    }
+
+    /* Form Input and Buttons */
+    div {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+     label {
+        margin-right: 10px;
+        font-weight: bold;
+    } 
+  
+    input[type="text"] {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 8px;
+        width: 200px;
+        margin-right: 10px;
+    }
+
+    button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+    #splitquantity, #save, #generate-pdf {
+        margin-left: 5px;
+    }
+
+    /* Table Styling */
+    .table {
+        width: 100%;
+        max-width: 100%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .table th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    <style >
+    /* General Page Styling */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        margin: 20px;
+    }
+
+    /* Heading Styling */
+    h2 {
+        text-align: center;
+        color: #4CAF50;
+        margin-bottom: 20px;
+    }
+
+    /* Form Input and Buttons */
+    div {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    label {
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    input[type="text"] {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 8px;
+        width: 200px;
+        margin-right: 10px;
+    }
+
+    button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+    #splitquantity, #save, #generate-pdf {
+        margin-left: 5px;
+    }
+
+    /* Table Styling */
+    .table {
+        width: 100%;
+        max-width: 100%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .table th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    /* Footer Styling */
+    footer {
+        text-align: center;
+        padding: 10px 0;
+        background-color: #f4f4f4;
+        border-top: 1px solid #ddd;
+    }
+
+    #rowcount {
+        font-style: italic;
+        color: #555;
+    }
+
+    /* Edit/Update/Cancel Buttons */
+    .btn {
+        font-size: 12px;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+</style>
+
+
+
+
+
+@section Scripts {
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://cdn.syncfusion.com/ej2/22.4.39/material.css" rel="stylesheet">
+    <script src="https://cdn.syncfusion.com/ej2/22.4.39/dist/ej2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+            loadChart();
+        // Hide the table on page load
+        $('#resultTable').hide();
+
+    
+        // When the Show Grid button is clicked
+        $('#showGridButton').click(function () {
+            var challanno = $('#challanno').val();  // Get the challanno value
+
+            if (!challanno) {
+                alert("Please enter a Challan No.");
+                return;
+            }
+
+            // Make the AJAX call to get data from the controller
+            $.ajax({
+                url: '@Url.Action("GridChallan", "Challan")',
+                type: 'GET',
+                data: { challanno: challanno },
+                success: function (data) {
+                    
+                    $('#resultBody').empty();  // Clear existing rows in the table
+                    $('#resultTable').show();  // Show the table
+
+                    // Iterate over the data and create new table rows dynamically
+                    $.each(data, function (index, item) {
+                        $('#resultBody').append(`
+                                <tr>
+                                       <td><input type="checkbox" class="selectCheckbox" /></td>
+                                    <td>${item.challanno}</td>
+                                    <td>${item.challansrno}</td>
+                                    <td>${item.pono}</td>
+                                    <td>${item.posrno}</td>
+                                    <td>${item.itemcode}</td>
+                                    <td>${item.qty.toFixed(2)}</td>  
+                                    <td>${item.labelQty.toFixed(2)}</td>  
+                                   <td class="labelNoCell">
+                        <span class="labelNoText">${item.labelno}</span>
+                        <input type="text" class="labelNoInput" value="${item.labelno}" style="display: none;" />
+                    </td>
+                     <td>
+                                <button class="btn btn-sm btn-primary editBtn">Edit</button>
+                                <button class="btn btn-sm btn-success updateBtn" style="display: none;">Update</button>
+                                <button class="btn btn-sm btn-secondary cancelBtn" style="display: none;">Cancel</button>
+                            </td>
+                                </tr>
+                            `);
+                            $('#rowcount').text($('#resultBody tr').length)
+                    });
+                    $('#resultBody').on('click', '.editBtn', function () {
+                    let row = $(this).closest('tr');
+                    row.find('.labelNoText').hide();
+                    row.find('.labelNoInput').show();
+                    row.find('.editBtn').hide();
+                    row.find('.updateBtn, .cancelBtn').show();
+                });
+                   // Update button functionality
+                // Update button handler
+        $('#resultBody').on('click', '.updateBtn', function () {
+            let row = $(this).closest('tr');
+            let newLabelNo = row.find('.labelNoInput').val();
+
+            // Validate the new Label No
+            if (!newLabelNo) {
+                alert("Label No cannot be empty.");
+                return;
+            }
+             if ( newLabelNo <= 0 ) {
+                alert("Label No cannot be zero and negative.");
+                return;
+            }
+
+            // Update the text in the grid
+            row.find('.labelNoText').text(newLabelNo).show(); // Update and show the text
+            row.find('.labelNoInput').hide(); // Hide the input
+            row.find('.editBtn').show(); // Show the Edit button
+            row.find('.updateBtn, .cancelBtn').hide(); // Hide the Update and Cancel buttons
+        });
+
+        // Cancel button handler
+        $('#resultBody').on('click', '.cancelBtn', function () {
+            let row = $(this).closest('tr');
+
+            // Revert to original value
+            let originalLabelNo = row.find('.labelNoText').text();
+            row.find('.labelNoInput').val(originalLabelNo).hide(); // Reset input value and hide it
+            row.find('.labelNoText').show(); // Show the original text
+            row.find('.editBtn').show(); // Show the Edit button
+            row.find('.updateBtn, .cancelBtn').hide(); // Hide the Update and Cancel buttons
+        });
+    
+
+                    // Ensure only one row can be selected at a time using delegated event handling
+                    $('#resultBody').on('change', '.selectCheckbox', function () {
+                        $('.selectCheckbox').not(this).prop('checked', false);
+                    });
+                },
+                error: function () {
+                    alert("Error retrieving data. Please check the Challan No.");
+                }
+            });
+
+        });
+
+        // For PDFF
+   
+
+        // Save
+        $('#save').click(function () {
+    let gridData = [];
+
+    $('#resultBody tr').each(function () {
+        let row = $(this).children("td");
+        gridData.push({
+            ChallanNo: row.eq(1).text(),
+            ChallanSrNo: row.eq(2).text(),
+            PONo: row.eq(3).text(),
+            POSrNo: row.eq(4).text(),
+            ItemCode: row.eq(5).text(),
+            Qty: parseFloat(row.eq(7).text()),
+            LabelNo: row.eq(8).find('.labelNoText').text(),
+           // SessionId: generateUUID() // Generate a UUID for SessionId
+        });
+    });
+
+    if (gridData.length === 0) {
+        alert("No data to save.");
+        return;
+    }
+
+    // AJAX call to save the grid data
+    $.ajax({
+        url: '@Url.Action("SaveChallanSplitData", "Challan")', // Server-side action
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(gridData),
+        success: function (response) {
+            alert("Data saved successfully.");
+            // Optional: Clear the grid or give feedback
+        },
+        error: function () {
+            alert("Error saving data.");
+        }
+    });
+});
+
+//PDF labelTranData
+        $('#generate-pdf').on('click', function () {
+            $.ajax({
+                url: '/Challan/GetLabelTranData',
+                method: 'GET',
+                success: function (data) {
+                    console.log('Fetched data:', data); // Debugging
+                    if (data && data.length > 0) {
+                        generateLabelTranPdf(data);
+                    } else {
+                        alert('No data available to generate the PDF.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching data:', error);
+                    alert('Failed to fetch data. Please try again.');
+                }
+            });
+        });
+
+            function generateLabelTranPdf(data) {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                // Add title
+                doc.setFont("Courier", "bold");
+                doc.setFontSize(16);
+                doc.text("LabelTran Data", 10, 10);
+
+                // Add table headers
+                const startX = 10;
+                let startY = 20; // Starting Y position
+                doc.setFontSize(12);
+                doc.text("LabelSrNo", startX, startY);
+                doc.text("PONo", startX + 30, startY);
+                doc.text("ItemCode", startX + 60, startY);
+                doc.text("Qty", startX + 110, startY);
+
+                // Draw a line under headers
+                doc.line(10, startY + 2, 190, startY + 2);
+                startY += 10;
+
+                // Add rows for data
+                data.forEach((row, index) => {
+                    try {
+                        const labelSrNo = row.labelSrNo || "N/A";
+                        const poNo = row.poNo || "N/A";
+                        const itemCode = row.itemCode || "N/A";
+                        const qty = row.qty || "N/A";
+
+                        doc.text(String(labelSrNo), startX, startY + (index * 10));
+                        doc.text(String(poNo), startX + 30, startY + (index * 10));
+                        doc.text(itemCode, startX + 60, startY + (index * 10));
+                        doc.text(String(qty), startX + 110, startY + (index * 10));
+                    } catch (e) {
+                        console.error("Error adding text to PDF:", e, row);
+                    }
+                });
+
+                // Save the PDF
+                doc.save("LabelTranData.pdf");
+            }
+
+            // Function to load chart data and render based on the selected type
+            function loadChart() {
+                var chartType = $("#chartType").val(); // Get selected chart type
+
+                // Fetch data from the server
+                $.ajax({
+                    type: "Get",
+                    url: "/Challan/GetChartData", // Adjust to your actual controller endpoint
+                    data: { chartType: chartType },
+                    success: function (data) {
+                        renderChart(chartType, data); // Pass data to render function
+                    },
+                    error: function () {
+                        alert("Error fetching chart data");
+                    }
+                });
+            }
+
+            function renderChart(chartType, chartData) {
+                // Clear the existing chart
+                document.getElementById("chartContainer").innerHTML = "";
+
+                // Switch case to handle different chart types
+                switch (chartType) {
+                    case "bar":
+                        new ej.charts.Chart({
+                            primaryXAxis: { valueType: 'Category', title: 'Categories' },
+                            primaryYAxis: { title: 'Values' },
+                            series: [{
+                                dataSource: chartData,
+                                xName: 'Category',
+                                yName: 'Qty',
+                                type: 'Bar'
+                            }],
+                            title: 'Bar Chart Example'
+                        }).appendTo('#chartContainer');
+                        break;
+
+                    case "pie":
+                        new ej.charts.AccumulationChart({
+                            series: [{
+                                dataSource: chartData,
+                                xName: 'LabelSrNo',
+                                yName: 'Qty',
+                                type: 'Pie'
+                            }],
+                            title: 'Pie Chart Example'
+                        }).appendTo('#chartContainer');
+                        break;
+
+                    case "line":
+                        new ej.charts.Chart({
+                            primaryXAxis: { valueType: 'LabelSrNo', title: 'Categories' },
+                            primaryYAxis: { title: 'Qty' },
+                            series: [{
+                                dataSource: chartData,
+                                xName: 'LabelSrNo',
+                                yName: 'Qty',
+                                type: 'Line'
+                            }],
+                            title: 'Line Chart Example'
+                        }).appendTo('#chartContainer');
+                        break;
+
+                    default:
+                        alert("Invalid chart type selected!");
+                        break;
+                }
+            }
+
+    // function generateLabelTranPdf(data) {
+    //     const { jsPDF } = window.jspdf;
+    //     const doc = new jsPDF();
+    //     doc.setFont('Courier');
+    //     doc.text('LabelTran Data', 10, 10);
+    //     doc.save('LabelTranData.pdf');
+    // }
+
+        // Split Quantity button click handler
+        $('#splitquantity').click(function () {
+            let selectedRow = $('#resultBody tr').has('input.selectCheckbox:checked');
+            let rowsData = [];
+
+            if (selectedRow.length === 0) {
+                alert("Please select a row.");
+                return;
+            }
+            let splitQuantity = prompt("Enter Split Quantity:");
+
+            // Validate split quantity input
+            if (splitQuantity === null || isNaN(splitQuantity) || splitQuantity <= 0) {
+                alert("Please enter a valid split quantity.");
+                return;
+            }
+            splitQuantity = parseFloat(splitQuantity);
+ 
+
+    // Get the available quantity (Qty) from the selected row
+    let availableQty = parseFloat(selectedRow.children("td").eq(6).text());
+
+    // Check if split quantity is greater than available quantity
+    if (splitQuantity > availableQty) {
+        alert("Split quantity cannot be greater than available quantity.");
+        return;
+    }
+
+
+            // Collect all row data
+            // Collect data from the selected row only
+            if (selectedRow.length) {
+                let row = selectedRow.children("td");
+                rowsData.push({
+                    challanno: row.eq(1).text(),
+                    challansrno: row.eq(2).text(),
+                    pono: row.eq(3).text(),
+                    posrno: row.eq(4).text(),
+                    itemcode: row.eq(5).text(),
+                    qty: parseFloat(row.eq(6).text()),
+                    labelQty: parseFloat(row.eq(7).text()),
+                    labelno: row.eq(8).text()
+                });
+            }
+
+            // Send all rows data and split quantity to the server
+            $.ajax({
+                url: '@Url.Action("SplitQuantity", "Challan")', // Server-side action
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    rows: rowsData,
+                    splitQuantity: splitQuantity
+                }),
+                success: function (response) {
+                       let updatedRow = response.updatedRows[0]; // Assume only one row updated
+                if (updatedRow) {
+                    // Clone the selected row
+                    let newRow = selectedRow.clone();
+
+                    // Update the Label Qty of the selected row
+                    selectedRow.children("td").eq(7).text(updatedRow.labelQty.toFixed(2));
+
+                    // Update the cloned row with new data from the server
+                    newRow.children("td").eq(7).text(response.updatesplit.toFixed(2));
+                  
+
+                    // Append the cloned row to the table
+                   selectedRow.after(newRow);
+                   $('#rowcount').text($('#resultBody tr').length)
+
+                } 
+                },
+                error: function () {
+                    alert("Error during quantity split.");
+                }
+            });
+        });
+    });
+ 
+
+</script>
+}

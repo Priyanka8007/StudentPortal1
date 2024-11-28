@@ -7,7 +7,6 @@ using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using StudentPortal1.Data;
-using StudentPortal1.Filters;
 using StudentPortal1.Mappings;
 using StudentPortal1.Repositories;
 using StudentPortal1.Services;
@@ -57,18 +56,29 @@ namespace StudentPortal1
           
             builder.Services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
+
+            builder.Services.AddDbContext<TempUserDbContext>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("StudentConnectionString")));
             builder.Services.AddDbContext<EmployeeDbContext>(options =>
-        
-            
             options.UseSqlServer(builder.Configuration.GetConnectionString("employeeConnectionString1")));
 
-            builder.Services.AddDbContext<StudentDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("StudentConnectionString")));
+            builder.Services.AddDbContext<BarcodeDbContext>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("BarcodeConnectionString")));
 
-         
+
+
+            builder.Services.AddDbContext<StudentDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("EngineerConnectionString")));
 
             builder.Services.AddDbContext<StudentAuthDbContext>(options =>
-           options.UseSqlServer(builder.Configuration.GetConnectionString("StudentAuthConnectionString")));
+              options.UseSqlServer(builder.Configuration.GetConnectionString("StudentAuthConnectionString")));
+
+            builder.Services.AddDbContext<ChallanDbContext>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("ChallanConnectionString")));
+
+
+            builder.Services.AddDbContext<EngineerDbContext>(options =>
+           options.UseSqlServer(builder.Configuration.GetConnectionString("employeeConnectionString1")));
 
             builder.Services.AddIdentityCore<IdentityUser>()
                  .AddRoles<IdentityRole>()
@@ -95,6 +105,7 @@ namespace StudentPortal1
             builder.Services.AddScoped<IStateRepository, StateRepository>();
             builder.Services.AddScoped<ICountryRepository, CountryRepository>();
             builder.Services.AddScoped<IPayrollRepository, PayrollRepository>();
+            builder.Services.AddScoped<IBarcode, BarcodeRepository>();
             builder.Services.AddScoped<IPayrollService, PayrollService>();
 
             // Register the custom action filter
@@ -105,12 +116,9 @@ namespace StudentPortal1
             //    options.Filters.Add<EmployeeActionFilter>();
             //});
             // Register the ActivityLoggingFilter
-            builder.Services.AddScoped<ActivityLoggingFilter>();
+           
 
-            builder.Services.AddControllersWithViews(options =>
-            {
-                options.Filters.Add<ActivityLoggingFilter>();
-            });
+           
             // Add HttpClient
          
             builder.Services.AddHttpClient();

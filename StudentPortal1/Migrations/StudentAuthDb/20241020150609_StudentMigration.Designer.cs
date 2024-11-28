@@ -12,8 +12,8 @@ using StudentPortal1.Data;
 namespace StudentPortal1.Migrations.StudentAuthDb
 {
     [DbContext(typeof(StudentAuthDbContext))]
-    [Migration("20240903181240_UserActivity")]
-    partial class UserActivity
+    [Migration("20241020150609_StudentMigration")]
+    partial class StudentMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

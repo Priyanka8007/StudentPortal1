@@ -1,0 +1,161 @@
+﻿@{
+    ViewData["Title"] = "Engineers";
+}
+
+<h2>Engineers</h2>
+
+<table id="engineerTable" class="table table-bordered" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Select</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Is Assigned</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Action Buttons -->
+<div>
+    <i class="fas fa-arrow-right fa-2x text-primary" onclick="assignAction()" style="cursor: pointer; margin-right: 10px;"></i>
+    <i class="fas fa-arrow-left fa-2x text-primary" onclick="deassignAction()" style="cursor: pointer; margin-right: 10px;"></i>
+</div>
+
+<h2>Assigned Engineers</h2>
+<table id="assignedEngineerTable" class="table table-bordered" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Select</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Assigned Date</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<script>
+    $(document).ready(function () {
+        // Load engineers and assigned engineers on page load
+        loadEngineers();
+        loadAssignedEngineers();
+
+        // Function to load engineers
+        function loadEngineers() {
+            $.ajax({
+                url: '/Engineer/GetEngineers',
+                type: 'GET',
+                success: function (data) {
+                    var engineerTable = $('#engineerTable tbody');
+                    engineerTable.empty();
+                    $.each(data, function (index, eng) {
+                        engineerTable.append(
+                            '<tr>' +
+                            '<td><input type="checkbox" class="engineer-checkbox" value="' + eng.eId + '"></td>' +
+                            '<td>' + eng.eId + '</td>' +
+                            '<td>' + eng.eName + '</td>' +
+                            '<td>' + eng.eDepartment + '</td>' +
+                            '<td>' + (eng.isAssigned ? 'Yes' : 'No') + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                },
+                error: function () {
+                    alert('Failed to load engineers.');
+                }
+            });
+        }
+
+        // Function to load assigned engineers
+        function loadAssignedEngineers() {
+            $.ajax({
+                url: '/Engineer/GetAssignedEngineers',
+                type: 'GET',
+                success: function (data) {
+                    var assignedEngineerTable = $('#assignedEngineerTable tbody');
+                    assignedEngineerTable.empty();
+                    $.each(data, function (index, eng) {
+                        assignedEngineerTable.append(
+                            '<tr>' +
+                            '<td><input type="checkbox" class="engineer-checkbox" value="' + eng.eId + '"></td>' +
+                            '<td>' + eng.eId + '</td>' +
+                            '<td>' + eng.name + '</td>' +
+                            '<td>' + eng.department + '</td>' +
+                            '<td>' + new Date(eng.assignedDate).toLocaleString() + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                },
+                error: function () {
+                    alert('Failed to load assigned engineers.');
+                }
+            });
+        }
+
+        // Assign engineers
+        window.assignAction = function () {
+            var selectedEngineerIds = [];
+            $('#engineerTable tbody .engineer-checkbox:checked').each(function () {
+                selectedEngineerIds.push(parseInt($(this).val()));
+            });
+
+            if (selectedEngineerIds.length === 0) {
+                alert("Please select at least one engineer to assign.");
+                return;
+            }
+
+            $.ajax({
+                url: '/Engineer/AssignEngineer',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(selectedEngineerIds),
+                success: function () {
+                    alert("Engineers assigned successfully.");
+                    loadEngineers();
+                    loadAssignedEngineers();
+                },
+                error: function (xhr) {
+                    alert('Failed to assign engineers: ' + xhr.responseText);
+                }
+            });
+        };
+
+        // Deassign engineers
+        window.deassignAction = function () {
+            var selectedEngineers = [];
+            $('#assignedEngineerTable tbody .engineer-checkbox:checked').each(function () {
+                var row = $(this).closest('tr');
+                var name = row.find('td:eq(2)').text();
+                var department = row.find('td:eq(3)').text();
+                selectedEngineers.push({ name: name, department: department });
+            });
+
+            if (selectedEngineers.length === 0) {
+                alert("Please select at least one engineer to deassign.");
+                return;
+            }
+
+            $.ajax({
+                url: '/Engineer/DeassignEngineer',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(selectedEngineers),
+                success: function () {
+                    alert("Engineers deassigned successfully.");
+                    loadEngineers();
+                    loadAssignedEngineers();
+                },
+                error: function (xhr) {
+                    alert('Failed to deassign engineers: ' + xhr.responseText);
+                }
+            });
+        };
+    });
+</script>

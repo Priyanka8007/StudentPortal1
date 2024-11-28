@@ -9,11 +9,11 @@ using StudentPortal1.Data;
 
 #nullable disable
 
-namespace StudentPortal1.Migrations
+namespace StudentPortal1.Migrations.StudentDb
 {
     [DbContext(typeof(StudentDbContext))]
-    [Migration("20240323195744_createperson")]
-    partial class createperson
+    [Migration("20241020150846_StudentdbMigration")]
+    partial class StudentdbMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

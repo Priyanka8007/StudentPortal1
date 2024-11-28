@@ -9,6 +9,7 @@ namespace StudentPortal1.Mappings
        
         public AutoMapperProfiles()
         {
+            CreateMap<BarcodeDto, Barcode>();
             // Mapping between Student and StudentDto
             CreateMap<Student, StudentDto>().ReverseMap();
 
@@ -29,6 +30,7 @@ namespace StudentPortal1.Mappings
             CreateMap<Country, CountryDto>().ReverseMap();
             CreateMap<Payroll, PayrollDto>().ReverseMap();
             CreateMap< PayrollDto, Payroll>().ReverseMap();
+            CreateMap<ChallanSplitResultDto, DlvChln>().ReverseMap();
         }
     }
 }
